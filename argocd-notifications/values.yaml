@@ -145,7 +145,7 @@ triggers:
     - description: application deploy has started
       send:
       - app-sync-started
-      when: app.status.sync.status == 'Running'
+      when: app.status.operationState.phase in ['Running']
 
 bots:
   # For more information: https://argocd-notifications.readthedocs.io/en/stable/bots/overview/
