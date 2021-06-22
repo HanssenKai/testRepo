@@ -71,7 +71,7 @@ notifiers:
   service.slack: |
     token: $slack-token
   service.webhook.deploy-alert-endpoint: |
-    url: http://195.56.72.153:8888
+    url: http://http-echo:8888
     
 
 podAnnotations: {}
