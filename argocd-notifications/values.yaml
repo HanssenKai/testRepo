@@ -130,7 +130,7 @@ templates:
         method: POST
         body: |
           {
-            "Time": "12.04"
+            "Time": "12.04",
           }
 #{ "Time":"2021-04-02 09:48:49 UTC",  "Action":"Deploy started",  "ServiceName":"Persontjenesten", "ServiceComponent":"FhirLoader", "ReleaseId":"3544", "ReleaseName":"Release-373", "ReleaseWebUrl":"https://dev.azure.com/NorskHelsenettUtvikling/0xxxxxxxx", "Version":"20210326.2" }
 
