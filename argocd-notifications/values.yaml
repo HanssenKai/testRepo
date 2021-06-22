@@ -1,0 +1,193 @@
+affinity: {}
+
+# ArgoCD dashboard url; used in place of {{.context.argocdUrl}} in templates
+argocdUrl:
+
+fullnameOverride: ""
+
+image:
+  repository: argoprojlabs/argocd-notifications
+  tag: v1.1.1
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: "argocd-notifications"
+
+nodeSelector: {}
+
+updateStrategy:
+  type: Recreate
+
+context:
+  # Add custom values into context
+  #  region: east
+  #  environmentName: staging
+
+secret:
+  # Whether helm chart creates controller secret
+  create: true
+
+  items:
+    # Generic key:value pairs to be inserted into the secret
+    # Can be used for templates, notification services etc. Some examples given below.
+    # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/
+
+    # slack-token:
+    #   # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/slack/
+
+    # grafana-apiKey:
+    #   # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/grafana/
+
+    # webhooks-github-token:
+
+    # email-username:
+    # email-password:
+      # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/email/
+
+logLevel: info
+
+extraArgs: []
+
+metrics:
+  enabled: false
+  port: 9001
+  service:
+    annotations: {}
+    labels: {}
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    # namespace: monitoring
+    # interval: 30s
+    # scrapeTimeout: 10s
+
+# Additional container environment variables
+extraEnv: []
+
+notifiers:
+# For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/
+
+  service.slack: |
+    token: $slack-token
+  service.webhook.deploy-alert-endpoint: |
+    url: http://195.56.72.153:8888
+    
+
+podAnnotations: {}
+
+## Pod Security Context
+securityContext:
+  runAsNonRoot: true
+
+## Container Security Context
+containerSecurityContext: {}
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: argocd-notifications-controller
+  annotations: {}
+
+cm:
+  # Whether helm chart creates controller config map
+  create: true
+
+subscriptions:
+  # For more information: https://argocd-notifications.readthedocs.io/en/stable/subscriptions/
+
+  # # subscription for on-sync-status-unknown trigger notifications
+  # - recipients:
+  #   - slack:test2
+  #   - email:test@gmail.com
+  #   triggers:
+  #   - on-sync-status-unknown
+  # # subscription restricted to applications with matching labels only
+  # - recipients:
+  #   - slack:test3
+  #   selector: test=true
+  #   triggers:
+  #   - on-sync-status-unknown
+  - recipients:
+    - triggers:
+      - on-sync-start
+
+templates:
+  # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/
+
+  template.app-sync-started: |
+    webhook:
+      deploy-alert-endpoint:
+        method: POST
+        body: |
+          {
+            "Time": "12.04"
+          }
+#{ "Time":"2021-04-02 09:48:49 UTC",  "Action":"Deploy started",  "ServiceName":"Persontjenesten", "ServiceComponent":"FhirLoader", "ReleaseId":"3544", "ReleaseName":"Release-373", "ReleaseWebUrl":"https://dev.azure.com/NorskHelsenettUtvikling/0xxxxxxxx", "Version":"20210326.2" }
+
+
+  
+tolerations: []
+
+triggers:
+  trigger.on-sync-start: |
+    - description: application deploy has started
+      send:
+      - app-sync-started
+      when: app.status.sync.status == 'Running'
+
+bots:
+  # For more information: https://argocd-notifications.readthedocs.io/en/stable/bots/overview/
+  slack:
+    # You have to set secret.notifiers.slack.signingSecret
+    enabled: false
+
+    updateStrategy:
+      type: Recreate
+
+    image:
+      repository: argoprojlabs/argocd-notifications
+      tag: v1.1.1
+      pullPolicy: IfNotPresent
+
+    imagePullSecrets: []
+
+    service:
+      annotations: {}
+      port: 80
+      type: LoadBalancer
+
+    serviceAccount:
+      # Specifies whether a service account should be created
+      create: true
+
+      # The name of the service account to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name: argocd-notifications-bot
+
+      annotations: {}
+
+    resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+    affinity: {}
+
+    tolerations: []
+
+    nodeSelector: {}
