@@ -1,7 +1,7 @@
 affinity: {}
 
 # ArgoCD dashboard url; used in place of {{.context.argocdUrl}} in templates
-argocdUrl:
+argocdUrl: http://argocd-server
 
 fullnameOverride: ""
 
