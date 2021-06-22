@@ -26,7 +26,7 @@ context:
 
 secret:
   # Whether helm chart creates controller secret
-  create: true
+  create: false
 
   items:
     # Generic key:value pairs to be inserted into the secret
