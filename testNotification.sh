@@ -1,0 +1,1 @@
+kubectl exec -it curl --  curl -X POST -H "Content-Type: application/json" -d '{ "Time":"2021-04-02 09:48:49 UTC",  "Action":"Deploy started",  "ServiceName":"Persontjenesten-test", "ServiceComponent":"test-komponent", "ReleaseId":"9999", "ReleaseName":"Release-999", "ReleaseWebUrl":"https://test-release", "Version":"20210326.2" }' http://http-echo:8888
