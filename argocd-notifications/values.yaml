@@ -118,8 +118,8 @@ subscriptions:
   #   triggers:
   #   - on-sync-status-unknown
   - recipients:
-    - triggers:
-      - on-sync-start
+    triggers:
+    - on-sync-start
 
 templates:
   # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/
