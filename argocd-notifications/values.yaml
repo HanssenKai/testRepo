@@ -68,8 +68,6 @@ extraEnv: []
 notifiers:
 # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/
 
-  service.slack: |
-    token: $slack-token
   service.webhook.deploy-alert-endpoint: |
     url: http://http-echo:8888
     
