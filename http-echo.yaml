@@ -5,7 +5,7 @@ metadata:
     kubernetes.io/psp: client-psp
   labels:
     run: listening-socket
-  name: listening-socket
+  name: http-echo
   namespace: argocd
 spec:
   containers:
@@ -49,7 +49,7 @@ kind: Service
 metadata:
   labels:
     run: listening-socket
-  name: listening-socket
+  name: http-echo
   namespace: argocd
 spec:
   clusterIP: 195.56.72.153
