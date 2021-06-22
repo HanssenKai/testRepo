@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubernetes.io/psp: client-psp
+  labels:
+    run: listening-socket
+  name: listening-socket
+  namespace: argocd
+spec:
+  containers:
+  - image: mendhak/http-https-echo:18
+    imagePullPolicy: IfNotPresent
+    name: listening-socket
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-kxckw
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: nhn-argo-test-workers-gtc2v-57665d956b-2chtv
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: default-token-kxckw
+    secret:
+      defaultMode: 420
+      secretName: default-token-kxckw
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: listening-socket
+  name: listening-socket
+  namespace: argocd
+spec:
+  clusterIP: 195.56.72.153
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 8888
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: listening-socket
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
