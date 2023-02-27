@@ -84,25 +84,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${ env.REGISTRY }}/${{ github.repository }}
-          tags: |
-            type=semver,pattern={{version}}
+            #- name: Extract metadata (tags, labels) for Docker
+            #  id: meta
+            #  uses: docker/metadata-action@v4
+            #  with:
+            #    images: ${ env.REGISTRY }}/${{ github.repository }}
+            #    tags: |
+            #      type=semver,pattern={{version}}
       
-      - name: Build and push Docker image tags
-        uses: docker/build-push-action@v3
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: GITHUB_NPM_PAT=${{ secrets.READ_PAT }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            #- name: Build and push Docker image tags
+            #  uses: docker/build-push-action@v3
+            #  if: startsWith(github.ref, 'refs/tags/v')
+            #  with:
+            #    context: .
+            #    push: true
+            #    tags: ${{ steps.meta.outputs.tags }}
+            #    labels: ${{ steps.meta.outputs.labels }}
+            #    build-args: GITHUB_NPM_PAT=${{ secrets.READ_PAT }}
+            #    cache-from: type=gha
+            #    cache-to: type=gha,mode=max
       
       - name: Build and push Docker image semver release
         uses: docker/build-push-action@v3
@@ -110,8 +110,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: GITHUB_NPM_PAT=${{secrets.READ_PAT}}
+          tags: ${{ needs.semantic-release.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
