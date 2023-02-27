@@ -25,6 +25,7 @@ jobs:
       - name: create package.json for semantic
         run: |
           ls
+          ls /
           pwd
           cat <<EOF > package.json
           {
