@@ -109,7 +109,6 @@ jobs:
       
       - name: Build and push Docker image semver release
         uses: docker/build-push-action@v3
-        if: ${{ steps.meta.outpus.tags }}
         with:
           context: .
           push: true
