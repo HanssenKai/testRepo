@@ -113,6 +113,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{ needs.semantic-release.outputs.version }}
+          tags: ${{env.REGISTRY}}/testrepo:${{ needs.semantic-release.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
