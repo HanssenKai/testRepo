@@ -85,13 +85,13 @@ jobs:
           password: ${{ secrets.GH_TOKEN }}
 
         
-            #- name: Extract metadata (tags, labels) for Docker
-            #  id: meta
-            #  uses: docker/metadata-action@v4
-            #  with:
-            #    images: ${ env.REGISTRY }}/${{ github.repository }}
-            #    tags: |
-            #      type=semver,pattern={{version}}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
       
             #- name: Build and push Docker image tags
             #  uses: docker/build-push-action@v3
