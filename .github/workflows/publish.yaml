@@ -24,10 +24,7 @@ jobs:
 
       - name: create package.json for semantic
         run: |
-          ls
-          ls /
-          pwd
-          cat <<EOF > package.json
+          cat <<EOF > /tmp/package.json
           {
             "name": "utdanning-semantic",
             "version": "0.1.0",
@@ -41,12 +38,12 @@ jobs:
             }
           }
           EOF
-          cat package.json
-
+          ls /tmp
+          cat /tmp/package.json
           
       - name: Install semantic dependencies
         run: |
-          npm install --prefix /tmp/semantic
+          npm install --prefix /tmp
       
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v3
