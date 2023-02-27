@@ -56,7 +56,7 @@ jobs:
             @semantic-release/git@^10.0.1
             @semantic-release/github@^8.0.7
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
 
   build-and-push:
     # IF TAG EXISTS
