@@ -64,7 +64,7 @@ jobs:
   build-and-push:
     # IF TAG EXISTS
     needs: semantic-release 
-    if: needs.semantic-release.outputs.new_release_published == 'true'
+    if: needs.semantic-release.outputs.published == 'true'
     runs-on: ubuntu-latest 
     permissions:
       contents: write
