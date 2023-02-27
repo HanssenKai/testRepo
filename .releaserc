@@ -36,5 +36,5 @@ analyzeCommits:
     release: "major"
   - type: "major"
     release: "major"
-    
+  - release: "patch"
 
