@@ -82,7 +82,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token }}
         
             #- name: Extract metadata (tags, labels) for Docker
             #  id: meta
@@ -103,6 +103,9 @@ jobs:
             #    build-args: GITHUB_NPM_PAT=${{ secrets.READ_PAT }}
             #    cache-from: type=gha
             #    cache-to: type=gha,mode=max
+      - name: printtag
+        run: |
+          echo ${{ needs.semantic-release.outputs.version }}
       
       - name: Build and push Docker image semver release
         uses: docker/build-push-action@v3
