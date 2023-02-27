@@ -37,6 +37,7 @@ jobs:
               "semantic-release": "^19.0.2"
             }
           }
+          EOF
           cat /tmp/semantic/package.json
 
           
