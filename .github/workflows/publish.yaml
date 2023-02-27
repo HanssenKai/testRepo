@@ -17,10 +17,10 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout repository
-        with:
-          persist-credentials: false
-        uses: actions/checkout@v3
+      #- name: Checkout repository
+      #  with:
+      #    persist-credentials: false
+      #  uses: actions/checkout@v3
 
       - name: create package.json for semantic
         run: |
@@ -61,6 +61,7 @@ jobs:
   build-and-push:
     # IF TAG EXISTS
     needs: semantic-release 
+    if: needs.semantic-release.outputs.new_release_published == 'true'
     runs-on: ubuntu-latest 
     permissions:
       contents: write
