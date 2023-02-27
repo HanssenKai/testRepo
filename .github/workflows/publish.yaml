@@ -40,6 +40,7 @@ jobs:
           EOF
           ls /tmp
           cat /tmp/package.json
+
           
       - name: Install semantic dependencies
         run: |
