@@ -29,6 +29,9 @@ jobs:
       - name: echo
         run: |
           echo ${{inputs.build-args}}
+      - name: echo sec
+        run: |
+          echo ${{secrets.READ_PAT}}
       #- name: Checkout repository
       #  uses: actions/checkout@v3
       #
