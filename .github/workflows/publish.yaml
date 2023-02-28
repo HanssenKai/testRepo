@@ -9,7 +9,5 @@ jobs:
     uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
     secrets: inherit
     with:
-      build-args:
-      - "args1"
-      - "args2"
+      build-args: "string1"
         #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
