@@ -16,13 +16,10 @@ env:
 
 jobs:
   build-and-push:
-    needs: semantic-release 
-    if: needs.semantic-release.outputs.published == 'true'
     runs-on: ubuntu-latest 
     permissions:
       contents: write
       packages: write
-    
     steps:
       - name: echo
         run: |
