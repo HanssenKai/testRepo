@@ -7,9 +7,7 @@ on: [push]
 jobs:
   publish:
     uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
-    secrets: 
-      - inherit
-      - READ_PAT
+    secrets: inherit
     with:
       build-args: "string1=${{secrets.READ_PAT}}"
         #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
