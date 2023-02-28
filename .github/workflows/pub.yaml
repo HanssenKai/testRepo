@@ -2,7 +2,9 @@ name: semantic release
 
 # publishes a image based on semantic versioning
 
-on: [pull-request]
+on: 
+  discussion:
+    types: [created]
 
 env:
   REGISTRY: ghcr.io
