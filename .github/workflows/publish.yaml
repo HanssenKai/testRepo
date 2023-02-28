@@ -6,7 +6,7 @@ on: [push]
 # use templated build workflow from master branch
 jobs:
   publish:
-    uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@master
+    uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
     secrets: inherit
     with:
       build-args:
