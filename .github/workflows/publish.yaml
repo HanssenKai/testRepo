@@ -1,10 +1,7 @@
 name: publish with semantic release
 
 # Runs on all pushes to master and development
-on:
-  push:
-    branches:
-      - "master"
+on: [push]
 
 # use templated build workflow from master branch
 jobs:
