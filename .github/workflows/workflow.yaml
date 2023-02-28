@@ -1,0 +1,55 @@
+name: semantic release
+
+# publishes a image based on semantic versioning
+
+on:
+  workflow_call: # only run when called from another workflow
+    inputs:
+      build-args:
+        required: true
+        type: list
+
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    needs: semantic-release 
+    if: needs.semantic-release.outputs.published == 'true'
+    runs-on: ubuntu-latest 
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: echo
+        run: |
+          echo ${{inputs.build-args}}
+      #- name: Checkout repository
+      #  uses: actions/checkout@v3
+      #
+      #- name: Set up Docker Buildx
+      #  uses: docker/setup-buildx-action@v2
+      #
+      #- name: Log in to the Container registry
+      #  uses: docker/login-action@v2
+      #  with:
+      #    registry: ${{ env.REGISTRY }}
+      #    username: ${{ github.actor }}
+      #    password: ${{ secrets.GITHUB_TOKEN }}
+      #  
+      #
+      #- name: Build and push Docker image
+      #  uses: docker/build-push-action@v3
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{ needs.semantic-release.outputs.version }}
+      #    #build-args: GITHUB_NPM_PAT=${{secrets.READ_PAT}}
+      #    build-args: ${{ inputs.build-args }}
+      #    cache-from: type=gha
+      #    cache-to: type=gha,mode=max
+
+

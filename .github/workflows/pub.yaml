@@ -1,0 +1,118 @@
+name: semantic release
+
+# publishes a image based on semantic versioning
+
+on: [pull-request]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    # requires write permissions, when called from another workflow, parent workflow also needs these permissions
+    permissions:
+      contents: write
+      packages: write
+    outputs: 
+      published:  ${{steps.semantic.outputs.new_release_published }}
+      version:  ${{steps.semantic.outputs.new_release_version }}
+
+    steps:
+      - name: Checkout repository
+        with:
+          persist-credentials: false
+        uses: actions/checkout@v3
+
+      - name: create package.json for semantic
+        run: |
+          cat <<EOF > /tmp/package.json
+          {
+            "name": "utdanning-semantic",
+            "version": "0.1.0",
+            "private": true,
+            "devDependencies": {
+              "@semantic-release/changelog": "^6.0.1",
+              "@semantic-release/exec": "^6.0.3",
+              "@semantic-release/git": "^10.0.1",
+              "@semantic-release/github": "^8.0.7",
+              "semantic-release": "^19.0.2"
+            }
+          }
+          EOF
+          ls /tmp
+          cat /tmp/package.json
+
+          
+      - name: Install semantic dependencies
+        run: |
+          npm install --prefix /tmp
+      
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v3
+        id: semantic
+        with:
+          extra_plugins: |
+            @semantic-release/changelog@^6.0.1
+            @semantic-release/exec@^6.0.3
+            @semantic-release/git@^10.0.1
+            @semantic-release/github@^8.0.7
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  build-and-push:
+    # IF TAG EXISTS
+    needs: semantic-release 
+    if: needs.semantic-release.outputs.published == 'true'
+    runs-on: ubuntu-latest 
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+
+        
+            #- name: Extract metadata (tags, labels) for Docker
+            #  id: meta
+            #  uses: docker/metadata-action@v4
+            #  with:
+            #    images: ${ env.REGISTRY }}/${{ github.repository }}
+            #    tags: |
+            #      type=semver,pattern={{version}}
+      
+            #- name: Build and push Docker image tags
+            #  uses: docker/build-push-action@v3
+            #  if: startsWith(github.ref, 'refs/tags/v')
+            #  with:
+            #    context: .
+            #    push: true
+            #    tags: ${{ steps.meta.outputs.tags }}
+            #    labels: ${{ steps.meta.outputs.labels }}
+            #    build-args: GITHUB_NPM_PAT=${{ secrets.READ_PAT }}
+            #    cache-from: type=gha
+            #    cache-to: type=gha,mode=max
+      - name: printtag
+        run: |
+          echo ${{ needs.semantic-release.outputs.version }}
+      
+      - name: Build and push Docker image semver release
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{env.REGISTRY}}/testrepo:${{ needs.semantic-release.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
