@@ -9,7 +9,7 @@ on:
 # use templated build workflow from master branch
 jobs:
   publish:
-    uses: HanssenKai/testRepo/.github/workflows/workflow.yaml
+    uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@master
     secrets: inherit
     with:
       build-args:
