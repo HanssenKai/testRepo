@@ -7,7 +7,7 @@ on:
     inputs:
       build-args:
         required: true
-        type: list
+        type: string
 
 
 env:
