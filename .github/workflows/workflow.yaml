@@ -7,11 +7,6 @@ on:
     inputs:
       build-args:
         required: true
-        type: string
-    secrets:
-      READ_PAT:
-        required: false
-        description: 'PAT'
       
 
 
