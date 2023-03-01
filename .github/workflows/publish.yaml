@@ -15,7 +15,7 @@ jobs:
       id: set_outputs
       shell: bash
       run: |
-        build-args="test=${{secrets.READ_PAT}}
+        build-args="test=${{secrets.READ_PAT}}"
         echo "::add-mask:$build-args"
         build-args-encrypted=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "$build-args") | base64 -w0)
         echo "::set-output name=build-args-encrypted::$build-args-encrypted"
