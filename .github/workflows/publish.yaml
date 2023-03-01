@@ -33,6 +33,7 @@ jobs:
         shell: bash
         run: |
           build_args=$(gpg --decrypt --quiet --batch --passphrase "$SECRET" --output - <(echo "${{ needs.create-buildargs.outputs.build_args_encrypted }}" | base64 --decode))
+          echo "$build_args"
           echo "::add-mask::$build_args"
           echo "::set-output name=build_args::$build_args"
         env:
