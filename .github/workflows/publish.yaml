@@ -21,29 +21,9 @@ jobs:
           build_args_encrypted=$(gpg --symmetric --batch --passphrase "${{secrets.READ_PAT}}" --output - <(echo "$build_args") | base64 -w0)
           echo "build_args_encrypted=$build_args_encrypted" >> $GITHUB_OUTPUT
 
-
-          #get-build-args:
-          #  name: "get-build-args"
-          #  needs: set-build-args
-          #  runs-on: ubuntu-latest
-          #  steps:
-          #    - name: Get Deploy Key
-          #      id: get_deploy_key
-          #      shell: bash
-          #      run: |
-          #        build_args=$(gpg --decrypt --quiet --batch --passphrase "${{secrets.READ_PAT}}" --output - <(echo "${{ needs.set-build-args.outputs.build_args_encrypted }}" | base64 --decode))
-          #        echo "$build_args"
-          #        echo "::add-mask::$build_args"
-          #        echo "build_args=$build_args" >> $GITHUB_OUTPUT
-
-          #    # Uses ${{ steps.get_deploy_key.outputs.build_args }} later...
-
   publish:
     uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
     needs: set-build-args
     secrets: inherit
     with:
-      #build-args: "${{'${{secrets.READ_PAT}}'}}"
-      #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
       build-args-encrypted: ${{needs.set-build-args.outputs.build_args_encrypted}}
-  #      #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
