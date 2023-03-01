@@ -45,5 +45,5 @@ jobs:
     with:
       #build-args: "${{'${{secrets.READ_PAT}}'}}"
       #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
-      build-args: ${{needs.set-build-args.outputs.build_args_encrypted}}
+      build-args-encrypted: ${{needs.set-build-args.outputs.build_args_encrypted}}
   #      #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
