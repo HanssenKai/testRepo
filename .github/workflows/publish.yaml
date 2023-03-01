@@ -34,7 +34,6 @@ jobs:
           build_args=$(gpg --decrypt --quiet --batch --passphrase "${{secrets.READ_PAT}}" --output - <(echo "${{ needs.create-buildargs.outputs.build_args_encrypted }}" | base64 --decode))
           echo "$build_args"
           echo "::add-mask::$build_args"
-          echo "::set-output name=build_args::$build_args"
           echo "build_args=$build_args" >> $GITHUB_OUTPUT
 
       # Uses ${{ steps.get_deploy_key.outputs.build_args }} later...
