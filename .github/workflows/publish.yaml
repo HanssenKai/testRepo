@@ -13,5 +13,5 @@ jobs:
     with:
       #build-args: "${{'${{secrets.READ_PAT}}'}}"
       #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
-      build-args: ${{SECRET}}
+      build-args: ${{env.SECRET}}
         #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
