@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: echo
         run: |
-          echo "TEST=${{inputs.build-args}}"
+          echo "${{inputs.build-args}}"
       - name: echo sec
         run: |
           echo ${{secrets.READ_PAT}}
