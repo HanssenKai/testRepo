@@ -22,12 +22,26 @@ jobs:
       contents: write
       packages: write
     steps:
+      - name: "get-build-args"
+        id: get_deploy_key
+        shell: bash
+        run: |
+          build_args=$(gpg --decrypt --quiet --batch --passphrase "${{secrets.READ_PAT}}" --output - <(echo "${{ needs.set-build-args.outputs.build_args_encrypted }}" | base64 --decode))
+          echo "$build_args"
+          echo "::add-mask::$build_args"
+          echo "build_args=$build_args" >> $GITHUB_OUTPUT
+
+          # Uses ${{ steps.get_deploy_key.outputs.build_args }} later...
+
       - name: echo
         run: |
           echo "${{inputs.build-args}}"
       - name: echo sec
         run: |
           echo ${{secrets.READ_PAT}}
+      - name: echo step
+        run: |
+          echo ${{steps.get_deploy_key.outputs.build_args}}
       #- name: Checkout repository
       #  uses: actions/checkout@v3
       #
