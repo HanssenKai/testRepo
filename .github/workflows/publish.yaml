@@ -3,13 +3,13 @@ name: publish with semantic release
 # Runs on all pushes to master and development
 on: [push]
 
+env:
+  SECRET: ${{secrets.READ_PAT}}
 # use templated build workflow from master branch
 jobs:
   publish:
     uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
     secrets: inherit
-    env:
-      SECRET: ${{secrets.READ_PAT}}
     with:
       #build-args: "${{'${{secrets.READ_PAT}}'}}"
       #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
