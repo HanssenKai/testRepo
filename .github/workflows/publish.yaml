@@ -8,8 +8,10 @@ jobs:
   publish:
     uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
     secrets: inherit
+    env:
+      SECRET: ${{secrets.READ_PAT}}
     with:
       #build-args: "${{'${{secrets.READ_PAT}}'}}"
       #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
-      build-args: ${{secrets.READ_PAT}}
+      build-args: ${{SECRET}}
         #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
