@@ -10,5 +10,6 @@ jobs:
     secrets: inherit
     with:
       #build-args: "${{'${{secrets.READ_PAT}}'}}"
-      build-args: ${{'TEST=${{secrets.READ_PAT}'}}
+      #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
+      build-args: ${{secrets.READ_PAT}}
         #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
