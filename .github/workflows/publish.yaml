@@ -8,6 +8,7 @@ env:
 # use templated build workflow from master branch
 jobs:
   create-build-args:
+    runs-on: ubuntu-latest
     outputs:
       build-args: {{ steps.build-args.outputs.build-args }}
     steps:
