@@ -1,4 +1,4 @@
-name: publish with semantic release
+name: get-buildargs with semantic release
 
 # Runs on all pushes to master and development
 on: [push]
@@ -19,11 +19,11 @@ jobs:
           echo $build_args
           echo "::add-mask::$build_args"
           build_args_encrypted=$(gpg --symmetric --batch --passphrase "${{secrets.READ_PAT}}" --output - <(echo "$build_args") | base64 -w0)
-          echo "::set-output name=build_args_encrypted::$build_args_encrypted"
+          echo "build_args_encrypted=$build_args_encrypted" >> $GITHUB_OUTPUT
 
 
-  publish:
-    name: "publish"
+  get-buildargs:
+    name: "get-buildargs"
     needs: create-buildargs
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +35,7 @@ jobs:
           echo "$build_args"
           echo "::add-mask::$build_args"
           echo "::set-output name=build_args::$build_args"
+          echo "build_args=$build_args" >> $GITHUB_OUTPUT
 
       # Uses ${{ steps.get_deploy_key.outputs.build_args }} later...
 
