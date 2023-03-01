@@ -15,7 +15,7 @@ jobs:
         id: set_outputs
         shell: bash
         run: |
-          build_args="test=testo"
+          build_args="GITHUB_NPM_PAT=secrets.READ_PAT"
           echo $build_args
           echo "::add-mask::$build_args"
           build_args_encrypted=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "$build_args") | base64 -w0)
