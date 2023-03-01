@@ -9,20 +9,30 @@ jobs:
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
-      build-args: ${{ steps.step1.outputs.test }}
+      build-args-encrypted: ${{ steps.set_outputs.outputs.build-args-encrypted }}
     steps:
     - name: Set outputs
       id: set_outputs
       shell: bash
       run: |
         build-args="test=${{secrets.READ_PAT}}
+        echo "::add-mask:$build-args"
         build-args-encrypted=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "$build-args") | base64 -w0)
-        echo "::set-output name=build-args::$build-args-encrypted"
+        echo "::set-output name=build-args-encrypted::$build-args-encrypted"
       env:
         SECRET: ${{ secrets.READ_PAT }}
   get-output:
     runs-on: ubuntu-latest
     needs: set_outputs
+    steps:
+    - name: Get outputs
+      id: get_outputs
+      shell: bash
+      run: |
+        build-args=$(gpg --decrypt --quiet --batch --passphrase "$SECRET" --output - <(echo "${{ needs.job1.outputs.build-args-encrypted }}" | base64 --decode))
+        echo "::add-mask::$build-args"
+        echo "::set-output name=build-args::$build-args"
+
   #publish:
   #  uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
   #  needs: set_outputs
