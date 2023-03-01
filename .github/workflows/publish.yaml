@@ -7,20 +7,21 @@ env:
   SECRET: ${{secrets.READ_PAT}}
 # use templated build workflow from master branch
 jobs:
-  create-build-args:
+  job1:
     runs-on: ubuntu-latest
+    # Map a step output to a job output
     outputs:
-      build-args: {{ steps.build-args.outputs.build-args }}
+      output1: ${{ steps.step1.outputs.test }}
+      output2: ${{ steps.step2.outputs.test }}
     steps:
-    - id: build-args
-      run: |
-        echo "NPM-PATH=${{secrets.READ_PAT}}" >> $GITHUB_OUTPUT
+    - id: step1
+      run: echo "test=hello" >> $GITHUB_OUTPUT
   publish:
     uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
-    needs: create-build-args
+    needs: job1
     secrets: inherit
     with:
       #build-args: "${{'${{secrets.READ_PAT}}'}}"
       #build-args: ${{'TEST=${{secrets.READ_PAT}'}}
-      build-args: ${{needs.create-build-args.outputs.build-args }}
+      build-args: ${{needs.job1.outputs.output1}}
         #- GITHUB_NPM_PAT=${{secrets.READ_PAT}} 
