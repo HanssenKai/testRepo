@@ -10,9 +10,9 @@ plugins:
 - '@semantic-release/commit-analyzer'
 - '@semantic-release/release-notes-generator'
 - - '@semantic-release/exec'
-  - generateNotesCmd: "echo ${nextRelease.version} > .version"
+  - generateNotesCmd: "test ${branch.type} != release || echo ${nextRelease.version} > .version"
 - - '@semantic-release/exec'
-  - prepareCmd: "sed -i 's,tag: .*$,tag: ${nextRelease.version},' helm/values.yaml"
+  - prepareCmd: "test ${branch.type} != release || sed -i 's,tag: .*$,tag: ${nextRelease.version},' helm/values.yaml"
 - - '@semantic-release/git'
   - message: "release: ${nextRelease.version}\n\n${nextRelease.notes}"
     assets: [ ".version", "helm/*" ]
