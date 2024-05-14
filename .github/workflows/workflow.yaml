@@ -6,9 +6,15 @@ on:
   workflow_call: # only run when called from another workflow
     inputs:
       build-args-encrypted:
-        required: true
-        type: string
-      
+          required: true
+          type: string
+    outputs:
+      tags:
+        description: "tag published"
+        value: ${{ jobs.build-and-push.outputs.tags }}
+      version:
+        description: "version published"
+        value: ${{ jobs.build-and-push.outputs.version }}
 
 
 env:
@@ -16,47 +22,111 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    # requires write permissions, when called from another workflow, parent workflow also needs these permissions
+    permissions:
+      contents: write
+      packages: write
+    outputs: 
+      published:  ${{steps.semantic.outputs.new_release_published }}
+      version:  ${{steps.semantic.outputs.new_release_version }}
+
+    steps:
+      - name: Checkout repository
+        with:
+          persist-credentials: false
+        uses: actions/checkout@v3
+      
+      - name: create package.json for semantic
+        run: |
+          cat <<EOF > /tmp/package.json
+          {
+            "name": "semantic",
+            "version": "0.1.0",
+            "private": true,
+            "devDependencies": {
+              "@semantic-release/changelog": "^6.0.1",
+              "@semantic-release/exec": "^6.0.3",
+              "@semantic-release/git": "^10.0.1",
+              "@semantic-release/github": "^8.0.7",
+              "semantic-release": "^19.0.2"
+            }
+          }
+          EOF
+
+      - name: Install semantic dependencies
+        run: |
+          npm install --prefix /tmp
+      
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v3
+        id: semantic
+        with:
+          extra_plugins: |
+            @semantic-release/changelog@^6.0.1
+            @semantic-release/exec@^6.0.3
+            @semantic-release/git@^10.0.1
+            @semantic-release/github@^8.0.7
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_PAT }}
+
   build-and-push:
+    needs: semantic-release 
+    if: needs.semantic-release.outputs.published == 'true'
     runs-on: ubuntu-latest 
     permissions:
       contents: write
       packages: write
+    outputs:
+      version: ${{ needs.semantic-release.outputs.version }}
+      tags: ${{ steps.meta.outputs.tags }}
+    
     steps:
-      - name: "get-build-args"
-        id: get_deploy_key
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: get-build-args
+        id: get_build_args
         shell: bash
         run: |
           build_args=$(gpg --decrypt --quiet --batch --passphrase "${{secrets.READ_PAT}}" --output - <(echo "${{inputs.build-args-encrypted}}" | base64 --decode))
-          echo "$build_args"
-          echo "::add-mask::$build_args"
+          echo -e "$build_args" | while IFS= read -r line; do
+            key="${line%=*}"
+            value="${line#*=}"
+            echo "::add-mask::$value"
+          done
           echo "build_args=$build_args" >> $GITHUB_OUTPUT
 
-      - name: echo step
-        run: |
-          echo ${{steps.get_deploy_key.outputs.build_args}}
-      #- name: Checkout repository
-      #  uses: actions/checkout@v3
-      #
-      #- name: Set up Docker Buildx
-      #  uses: docker/setup-buildx-action@v2
-      #
-      #- name: Log in to the Container registry
-      #  uses: docker/login-action@v2
-      #  with:
-      #    registry: ${{ env.REGISTRY }}
-      #    username: ${{ github.actor }}
-      #    password: ${{ secrets.GITHUB_TOKEN }}
-      #  
-      #
-      #- name: Build and push Docker image
-      #  uses: docker/build-push-action@v3
-      #  with:
-      #    context: .
-      #    push: true
-      #    tags: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{ needs.semantic-release.outputs.version }}
-      #    #build-args: GITHUB_NPM_PAT=${{secrets.READ_PAT}}
-      #    build-args: ${{ inputs.build-args }}
-      #    cache-from: type=gha
-      #    cache-to: type=gha,mode=max
+      - uses: actions/github-script@v3
+        id: build_args
+        with:
+          result-encoding: string
+          script: return `${{steps.get_build_args.outputs.build_args}}`
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{ needs.semantic-release.outputs.version }}, ${{ steps.meta.outputs.tags }}
+          build-args: ${{steps.build_args.outputs.result}}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
