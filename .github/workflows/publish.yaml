@@ -66,14 +66,14 @@ jobs:
 
       - name: Echo Docker image tags
         run: |
-          echo "tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.publish.outputs.version }}, ${{ needs.publish.outputs.tags }}"
+          echo "tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.publish.outputs.version }}, ${{ steps.meta.outputs.tags }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.publish.outputs.version }}, ${{ needs.publish.outputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.publish.outputs.version }}, ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             GITHUB_NPM_PAT=${{secrets.READ_PAT}}
