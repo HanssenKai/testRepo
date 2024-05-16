@@ -9,7 +9,7 @@ on:
       - "development"
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}_testrepo2
+  IMAGE_NAME: hanssenkai/test2
 
 # use templated build workflow from master branch
 jobs:
