@@ -14,7 +14,7 @@ plugins:
 - - '@semantic-release/exec'
   - prepareCmd: "test ${branch.type} != release || sed -i 's,tag: .*$,tag: ${nextRelease.version},' helm/values.yaml"
 - - '@semantic-release/git'
-  - message: "release: ${nextRelease.version}\n\n${nextRelease.notes}"
+  - message: "[skip ci] elease: ${nextRelease.version}\n\n${nextRelease.notes}"
     assets: [ ".version", "helm/*" ]
 - - '@semantic-release/github'
   - assets: []
