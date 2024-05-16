@@ -30,7 +30,7 @@ jobs:
           echo "build_args_encrypted=$build_args_encrypted" >> $GITHUB_OUTPUT
 
   publish:
-    uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@master
+    uses: HanssenKai/testRepo/.github/workflows/workflow.yaml@main
     needs: set-build-args
     secrets: inherit
     with:
