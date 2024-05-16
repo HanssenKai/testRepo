@@ -6,9 +6,9 @@ on:
     branches:
       - "master"
       - "development"
-  env:
-    REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}_bedrift
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}_testrepo2
 
 # use templated build workflow from master branch
 jobs:
