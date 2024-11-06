@@ -8,7 +8,7 @@ image:
   repository: nginx
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.0.19
+  tag: 1.0.20
 
 imagePullSecrets: []
 nameOverride: "rollouts-test-app"
